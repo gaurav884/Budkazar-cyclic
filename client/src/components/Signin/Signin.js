@@ -1,19 +1,18 @@
-import React, { useState,useContext } from 'react'
-import {Link} from "react-router-dom"
-import { useHistory } from "react-router-dom"
-import { UserContext } from "../../contexts/UserContext"
-import { HiOutlineMail } from "react-icons/hi"
-import { RiLockPasswordFill } from "react-icons/ri"
+import React,{useState ,useContext} from 'react'
+import { Link, useHistory } from "react-router-dom"
+import "./Signin.css"
+import { UserContext } from '../../contexts/UserContext'
+import Navbar from "../navbar/Navbar"
 
-const SignIn = () => {
-    const { state, dispatch } = useContext(UserContext)
-    const history = useHistory();
-    const [email, setEmail] = useState("tgaurav50@yahoo.com")
-    const [password, setPassword] = useState("Shady@cr7")
+const Signin = () => {
+    const {state , dispatch} = useContext(UserContext)
+    const [email , setEmail] = useState("tagurav50@yahoo.com")
+    const [password , setPassword] = useState("Shady@cr7");
     const [invalidLogin , setInvalidLogin] = useState(false)
+    const history = useHistory();
 
-    function handler() {
-        fetch("/auth/sign-in", {
+    function signInHandler() {
+        fetch("/auth/sign-in/hgjghgu76t78ufu6rf67uftf", {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json'
@@ -32,76 +31,51 @@ const SignIn = () => {
                     setPassword("")
                 }
                 else {
-                    
+                  
+                    setInvalidLogin(false);
                     localStorage.setItem("jwt", data.token);
                     localStorage.setItem("user", JSON.stringify(data.user));
                     dispatch({ type: "USER", payload: data.user })
-
-                    history.push("/")
+                    history.goBack();
+                    
                 }
             })
         })
 
     }
-    if(state){
-        history.push("/")
-    }
-  
+     
 
     return (
         <>
-        <div className="auth-page">
-            <div className="auth-page-container">
-                <div className="auth-page-image-container">
-                    <img src="./auth.jpg" />
+        <Navbar/>
+        <div className="signin-container">
+            <div className="signin-box">
+                <p className="signin-heading">Sign In</p>
+                <div className="signin-email-container">
+                   
+                    <input autoComplete="on" type="email" className="signin-email-input" placeholder="Email" value={email} onChange={(e)=>{setEmail(e.target.value)}}/>
                 </div>
-                <div className="sign-in-container">
-                    <div className="sign-in-heading">
-                        <p className="sign-in-heading-brand">Login to SS</p>
-                        <p className="sign-in-heading-signin">Welcome to the SS ! <br /> Login with the credentials used during registration</p>
-                    </div>
-
-                    <div className="sign-in-form">
-                        <div className="sign-in-email-container">
-                            <span><HiOutlineMail /></span>
-                            <div>
-                                <p>Email </p>
-                                <input type="email"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    className="sign-in-email-input" />
-                            </div>
-
-                        </div>
-
-                        <div className="sign-in-passoword-container">
-                            <span><RiLockPasswordFill /></span>
-                            <div>
-                                <p>Password</p>
-                                <input type="password"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    className="sign-in-passoword-input" />
-                            </div>
-
-                        </div>
-                        <div className="remember-me-forgot-container">
-                           <label><Link to="/forgot-password">forgot password ?</Link></label>
-                        </div>
-                         {invalidLogin ? <p className="invalid-login">Your Username and Password don't match !</p>:null}
-                        <button
-                            onClick={handler}
-                            className="sign-in-button">Sign In</button>
-                        
-                        <p className="new-account-link">Don"t have an account? <Link to="/sign-up">Register</Link></p>
-
-                    </div>
-
+                <div className="signin-password-container">
+                   
+                    <input autoComplete="on" type="password" className="signin-pass-input" placeholder="Password" value={password} onChange={(e)=>{setPassword(e.target.value)}}/>
                 </div>
+
+                <div className="signin-rembemberme-forgotpass-container">
+                   
+                    <Link to="/forgot-password">Forgot Password ?</Link>
+                </div>
+
+                {(invalidLogin)?<p className="sign-up-error">Your Email and Passoword does not match.</p>:null}
+                { (password && email ) ? 
+               <button onClick={()=>{signInHandler()}}>LOG IN NOW</button>:  <button style={{opacity:0.5}}>LOG IN NOW</button>}
+ 
+                <p className="signin-signup-link">Don't have an account? <Link to="/sign-up">Sign Up</Link></p>
+                      
+
             </div>
-            </div>
+        </div>
         </>
     )
 }
 
-export default SignIn
+export default Signin

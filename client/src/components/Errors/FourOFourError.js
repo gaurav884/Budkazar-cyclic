@@ -14,7 +14,7 @@ const FourOFourError = () => {
                     <BiErrorCircle />
                 </div>
                 <h3>Page not found </h3>
-                <button onClick={() => { history.goBack() }}>Go Back</button>
+                <button onClick={() => { history.push("/") }}>Go Home</button>
             </div>
         </div>
     )
