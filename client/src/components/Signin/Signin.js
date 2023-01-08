@@ -6,7 +6,7 @@ import Navbar from "../navbar/Navbar"
 
 const Signin = () => {
     const {state , dispatch} = useContext(UserContext)
-    const [email , setEmail] = useState("tagurav50@yahoo.com")
+    const [email , setEmail] = useState("tgaurav50@yahoo.com")
     const [password , setPassword] = useState("Shady@cr7");
     const [invalidLogin , setInvalidLogin] = useState(false)
     const history = useHistory();
