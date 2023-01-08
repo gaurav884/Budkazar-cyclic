@@ -1,5 +1,5 @@
 .FOF-page{
-    margin-top:67px;
+    margin-top:50px;
     width:100%;
     font-family: 'Archivo Narrow', sans-serif;
     display:flex;
@@ -12,7 +12,7 @@
     height: 400px;
     margin:100px auto;
     padding:50px;
-    border:0.1px solid rgba(255, 255, 255, 0.178);
+    border:0.1px solid rgba(0, 0, 0, 0.178);
     border-radius:10px;
 }
 
@@ -31,7 +31,7 @@
     padding:5px;
     border:none;
     height:40px;
-    background-color:rgb(24, 24, 211);
+    background-color: #00C1D4;
     margin:10px auto;
     width:100px;
 }

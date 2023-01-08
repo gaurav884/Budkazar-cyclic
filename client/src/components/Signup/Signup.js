@@ -1,17 +1,19 @@
-import React, { useState, useContext, useEffect } from 'react'
-import { Link, useHistory } from "react-router-dom"
-import "./SIgnup.css"
-import { UserContext } from '../../contexts/UserContext'
-import Navbar from "../navbar/Navbar"
+import React, { useState } from 'react'
+import { useHistory } from "react-router-dom"
+import { Link } from "react-router-dom"
+import { HiOutlineMail } from "react-icons/hi"
+import { RiLockPasswordFill } from "react-icons/ri"
+import { CgNametag } from "react-icons/cg"
 
-const Signup = () => {
-    const { state, dispatch } = useContext(UserContext)
+
+const SignUp = () => {
     const history = useHistory();
     const [name, setName] = useState("")
-    const [password, setPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
-    const [email, setEmail] = useState("");
-    const [sameEmailError, setSameEmailError] = useState(false);
+    const [email, setEmail] = useState("")
+    const [password, setPassword] = useState("")
+    
+    const [isDupMail, setIsDupMail] = useState(false)
+    const [passwordOk, setPassowrdOk] = useState(true)
 
 
     const [isNameTouched, setIsNameTouched] = useState(false);
@@ -26,8 +28,8 @@ const Signup = () => {
     const isPasswordValid = password.trim() !== "" && passwordChecker()
     const isPasswordInvalid = !isPasswordValid && isPasswordTouched
 
-    
 
+    
     var isFormValid = false;
 
     
@@ -35,47 +37,6 @@ const Signup = () => {
     if(isNameValid && isEmailValid && isPasswordValid ){
     
         isFormValid = true
-    }
-
-    useEffect(() => {
-        const user = JSON.parse(localStorage.getItem("user"));
-        if (user) {
-            history.push("/")
-        }
-
-    }, [])
-
-
-
-    function createAccount() {
-        fetch("/auth/sign-up/jfvuyfyt76rytufhjfjhgf", {
-            method: "POST",
-            headers: {
-                'content-Type': "application/json"
-            },
-            body: JSON.stringify({
-                name,
-                email,
-                password
-
-            })
-        }).then(res => {
-            res.json().then(data => {
-                if (data.error) {
-                    console.log(data.error)
-                    setSameEmailError(true)
-                }
-                else {
-                    setSameEmailError(false)
-
-                    history.goBack();
-
-                }
-
-            }).catch(err => {
-                console.log(err)
-            })
-        })
     }
 
 
@@ -92,13 +53,7 @@ const Signup = () => {
 
     }
 
-    function confirmPasswordHandler(e) {
-        setConfirmPassword(e.target.value)
-
-    }
-
-
-
+   
     function nameBlurHandler() {
         setIsNameTouched(true)
     }
@@ -111,9 +66,8 @@ const Signup = () => {
         setIsPasswordTouched(true)
     }
 
-   
 
-
+    
 
     function emailChecker() {
 
@@ -139,54 +93,108 @@ const Signup = () => {
         }
 
     }
-
     
 
-    if (state) {
-        history.push("/profile")
+
+    function handler() {
+        setIsDupMail(false)
+        fetch("/auth/sign-up", {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                name: name,
+                email: email,
+                password: password
+            })
+        }).then(response => {
+            response.json().then(data => {
+                console.log(data)
+                if (data.error === "email already exist") {
+                    setIsDupMail(true)
+                }
+                else {
+                    history.push("/sign-in")
+                }
+            })
+        })
+
     }
-
     return (
+
+
         <>
-            <Navbar />
-            <div className="signup-container">
-                <div className="signup-box">
-                    <p className="signup-heading">Sign Up</p>
-                    <div className="signup-name-container">
+            <div className="auth-page-container">
+                <div className="auth-page-image-container">
+                    <img src="./auth.jpg" />
+                </div>
+                <div className="sign-in-container">
+                    <div className="sign-in-heading">
+                        <p className="sign-in-heading-brand">Create an Account</p>
+                        <p className="sign-in-heading-signin">Join SS Today !</p>
+                    </div>
 
-                        <input type="text" className="signup-name-input" placeholder="Name" value={name} onChange={(e) => { nameHandler(e) }} onBlur={() => { nameBlurHandler() }} />
-                        {(isNameInvalid) ? <p className="sign-up-error">Enter the name</p> : null}
+                    <div className="sign-in-form">
+                        <div className="sign-in-name-container">
+                            <span><CgNametag /></span>
+                            <div>
+                                <p>Name </p>
+                                <input type="text"
+                                    value={name}
+                                    className="sign-in-name-input" 
+                                    onChange={(e) => { nameHandler(e) }} 
+                                    onBlur={() => { nameBlurHandler() }}
+                                   
+                                    />
+                                    
+                              
+                             </div>
+                             
+
+                        </div>
+                        {isNameInvalid && <p className="invalid-login"> Enter name properly !</p>}
+                        <div className="sign-in-email-container">
+                            <span><HiOutlineMail /></span>
+                            <div>
+                                <p>Email </p>
+                                <input type="email"
+                                    value={email}
+                                   className="sign-in-email-input"
+                                   onChange={(e) => { emailHandler(e) }} 
+                                    onBlur={() => { emailBlurHandler() }}
+                                    />
+                                  
+                            </div>
+
+                        </div>
+                        {isEmailInvalid&& <p className="invalid-login"> Enter email address properly !</p>}
+
+                        <div className="sign-in-passoword-container">
+                            <span><RiLockPasswordFill /></span>
+                            <div>
+                                <p>Password</p>
+                                <input type="password"
+                                    value={password}
+                                    className="sign-in-passoword-input"
+                                    onChange={(e) => { passworHandler(e) }} 
+                                    onBlur={() => { passwordBlurHandler() }}
+                                    />
+                                    
+                            </div>
+
+                        </div>
+                        {isPasswordInvalid && <p className="invalid-login"> Must contain a digit, an uppercase letter, a lowercase letter, a character not being alphanumeric.</p>}
+
                         
-                    </div>
-                    <div className="signup-email-container">
+                        { isFormValid ? <button
+                            onClick={handler}
+                            className="sign-in-button">Register</button> : <button className="sign-in-button invalid-button">Register</button>}
+                       {isDupMail && <p className="invalid-login" style={{textAlign: 'center'}}>This email is already registered.</p>}
 
-                        <input type="email" className="signup-email-input" placeholder="Email" value={email} onChange={(e) => { emailHandler(e) }} onBlur={() => { emailBlurHandler() }} />
-                        {(isEmailInvalid) ? <p className="sign-up-error">Enter the correct email</p> : null}
-                    </div>
-                    <div className="signup-password-container">
-
-                        <input type="password" className="signup-pass-input" placeholder="Password" value={password} onChange={(e) => { passworHandler(e) }} onBlur={() => { passwordBlurHandler() }} />
-
-                        {(isPasswordInvalid) ? <p className="sign-up-error">Passoword must contain a digit, an uppercase letter, a lowercase letter, a character not being alphanumeric.</p> : null}
-                    </div>
-                    <div className="signup-confirmpassword-container">
-
-                        <input type="password" className="signup-confirmpass-input" placeholder="Confirm Password" value={confirmPassword} onChange={(e) => { confirmPasswordHandler(e) }} />
-                        {(password === confirmPassword) ? null : <p className="sign-up-error">Passwords does not match</p>}
+                        <p className="new-account-link">Already have an account? <Link to="/sign-in">Login</Link></p>
 
                     </div>
-
-
-                    <div className="signup-rembemberme-forgotpass-container">
-
-                        <Link to="/sign-in">Already have an account?</Link>
-                        {(sameEmailError) ? <p className="sign-up-error">Email already exists</p> : null}
-                    </div>
-
-                    {(isFormValid) ?
-                        <button onClick={() => { createAccount() }}>Sign up</button> : <button style={{ opacity: 0.5 }}>Sign up</button>}
-
-
 
                 </div>
             </div>
@@ -194,4 +202,4 @@ const Signup = () => {
     )
 }
 
-export default Signup
+export default SignUp

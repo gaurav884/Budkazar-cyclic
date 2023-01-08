@@ -13,7 +13,7 @@ const FIVEOO = () => {
                     <BiErrorCircle />
                 </div>
                 <h3>Server Error</h3>
-                <button onClick={()=>{history.push("/")}}>Go Home</button>
+                <button onClick={()=>{history.goBack()}}>Go Back</button>
             </div>
         </div>
     )
